@@ -21,6 +21,14 @@ description: Please see the README on GitHub at <https://github.com/githubuser/f
 
 dependencies:
   - base >= 4.7 && < 5
+  - random
+  - Cabal
+  - cairo
+  - transformers
+  - linear
+  - vector
+  - colour
+  - mtl
 
 ghc-options:
   - -Wall
