@@ -1,5 +1,4 @@
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE RecordWildCards #-}
 
 module Colour (setColour) where
 
@@ -14,8 +13,7 @@ class CairoColour d where
 instance CairoColour (Colour Double) where
   withColour col = withRGBPattern channelRed channelGreen channelBlue
     where
-      -- RGB {channelRed = channelRed, channelBlue = channelBlue, channelGreen = channelGreen} = toSRGB col
-      RGB {..} = toSRGB col
+      RGB {channelRed = channelRed, channelBlue = channelBlue, channelGreen = channelGreen} = toSRGB col
 
 setColour :: (CairoColour c) => c -> Render ()
 setColour col = withColour col $ \pattern -> setSource pattern
