@@ -25,7 +25,7 @@ source-repository head
 
 library
   exposed-modules:
-      Lib
+      Colour
   other-modules:
       Paths_functional_art
   autogen-modules:
