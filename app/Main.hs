@@ -27,7 +27,7 @@ type Generate a = StateT StdGen (Reader World) a
 
 runGenerate :: World -> StdGen -> Generate a -> a
 runGenerate world rng =
-  flip runReader world . fmap fst . flip runStateT rng 
+  flip runReader world . fmap fst . flip runStateT rng
 
 bg :: Generate (Render ())
 bg = do
@@ -39,8 +39,11 @@ bg = do
 
 -- draw :: State Double (Generate (Render ()))
 -- draw = do
+--   red <- get
+--   if red >= 1
+--     then put 0
+--     else put $ red + 0.01
 --   (World w h _) <- ask
---   red <- state $ uniformR (0, 1)
 --   green <- state $ uniformR (0, 1)
 --   blue <- state $ uniformR (0, 1)
 --   return $ do
@@ -52,13 +55,13 @@ bg = do
 -- and wraps around after hitting 1.
 drawSquare :: State Double (Generate (Render ()))
 drawSquare = do
-  blue <- get
-  if blue >= 1
+  red <- get
+  if red >= 1
     then put 0
-    else put $ blue + 0.01
+    else put $ red + 0.01
   return $ do
     (World w h _) <- ask
-    red <- state $ uniformR (0, 1)
+    blue <- state $ uniformR (0, 1)
     green <- state $ uniformR (0, 1)
     return $ do
       setSourceRGBA red green blue 1
@@ -87,7 +90,7 @@ main :: IO ()
 main = do
   let world = World 600 600 1
   let frames = 100
-  let frameRenders = evalState (animation frames) 1
+  let frameRenders = evalState (animation frames) 0
   rng <- initStdGen
   let filenames = map (\i -> show i ++ ".png") [1 .. frames]
   mapM_ (uncurry $ writeSketch world rng) $ zip filenames frameRenders
