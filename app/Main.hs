@@ -37,19 +37,21 @@ bg = do
     rectangle 0 0 w h
     fill
 
--- draw :: State Double (Generate (Render ()))
--- draw = do
---   red <- get
---   if red >= 1
---     then put 0
---     else put $ red + 0.01
---   (World w h _) <- ask
---   green <- state $ uniformR (0, 1)
---   blue <- state $ uniformR (0, 1)
---   return $ do
---     setSourceRGBA red green blue 1
---     contourPath $ Contour $ V.fromList [V2 (w / 6) (h / 2), V2 (w / 6) (h / 4), V2 (5 * w / 6) (h / 4), V2 (5 * w / 6) (h / 2)]
---     fill
+draw :: State Double (Generate (Render ()))
+draw = do
+  red <- get
+  if red >= 1
+    then put 0
+    else put $ red + 0.01
+  return $ do
+    (World w h _) <- ask
+    green <- state $ uniformR (0, 1)
+    blue <- state $ uniformR (0, 1)
+    return $
+      do
+        setSourceRGBA red green blue 1
+        contourPath $ Contour $ V.fromList ([V2 (w / 6) (h / 2), V2 (w / 6) (h / 4), V2 (5 * w / 6) (h / 4), V2 (5 * w / 6) (h / 2)])
+        fill
 
 -- The animated state is the red channel, which gradually increases
 -- and wraps around after hitting 1.
@@ -70,9 +72,9 @@ drawSquare = do
 
 sketch :: State Double (Generate (Render ()))
 sketch = do
-  drawSquare_ <- drawSquare
+  draw_ <- draw
   return $ do
-    rs <- sequence [bg, drawSquare_]
+    rs <- sequence [bg, draw_]
     return $ sequence_ rs
 
 animation :: Int -> State Double [Generate (Render ())]
