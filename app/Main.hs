@@ -52,14 +52,14 @@ bg = do
 -- and wraps around after hitting 1.
 drawSquare :: State Double (Generate (Render ()))
 drawSquare = do
-  red <- get
-  if red >= 1
+  blue <- get
+  if blue >= 1
     then put 0
-    else put $ red + 0.01
+    else put $ blue + 0.01
   return $ do
     (World w h _) <- ask
+    red <- state $ uniformR (0, 1)
     green <- state $ uniformR (0, 1)
-    blue <- state $ uniformR (0, 1)
     return $ do
       setSourceRGBA red green blue 1
       rectangle (w / 4) (h / 4) (w / 2) (h / 2)
