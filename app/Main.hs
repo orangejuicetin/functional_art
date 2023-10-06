@@ -2,9 +2,9 @@ module Main (main) where
 
 import Control.Monad.Reader
 import Control.Monad.State
-import qualified Data.Vector as V
+-- import qualified Data.Vector as V
 import Graphics.Rendering.Cairo
-import Linear.V2
+-- import Linear.V2
 import System.Random
 
 data World = World
@@ -13,21 +13,21 @@ data World = World
     scaleFactor :: Double
   }
 
-newtype Contour = Contour (V.Vector (V2 Double))
+-- newtype Contour = Contour (V.Vector (V2 Double))
 
-contourPath :: Contour -> State Double (Generate (Render ()))
-contourPath (Contour vertices) = sequence_ $ concat [initCmds, lines_, endCmds]
-  where
-    initCmds = [newPath, moveTo (startX) (startY)]
-    lines_ = V.toList $ V.map (\(V2 xn yn) -> lineTo xn yn) $ V.tail vertices
-    endCmds = [closePath]
-    V2 startX startY = V.head vertices
+-- contourPath :: Contour -> State Double (Generate (Render ()))
+-- contourPath (Contour vertices) = sequence_ $ concat [initCmds, lines_, endCmds]
+--   where
+--     initCmds = [newPath, moveTo (startX) (startY)]
+--     lines_ = V.toList $ V.map (\(V2 xn yn) -> lineTo xn yn) $ V.tail vertices
+--     endCmds = [closePath]
+--     V2 startX startY = V.head vertices
 
 type Generate a = StateT StdGen (Reader World) a
 
 runGenerate :: World -> StdGen -> Generate a -> a
-runGenerate world rng scene =
-  flip runReader world . fmap fst . flip runStateT rng $ scene
+runGenerate world rng =
+  flip runReader world . fmap fst . flip runStateT rng 
 
 bg :: Generate (Render ())
 bg = do
@@ -73,14 +73,14 @@ sketch = do
     return $ sequence_ rs
 
 animation :: Int -> State Double [Generate (Render ())]
-animation frames = sequence $ map (const $ sketch) [1 .. frames]
+animation frames = mapM (const $ sketch) [1 .. frames]
 
 writeSketch :: World -> StdGen -> String -> Generate (Render ()) -> IO ()
-writeSketch world rng filepath sketch = do
+writeSketch world rng filepath sketchs = do
   surface <- createImageSurface FormatARGB32 (round $ worldWidth world) (round $ worldHeight world)
   renderWith surface $ do
     scale (scaleFactor world) (scaleFactor world)
-    runGenerate world rng sketch
+    runGenerate world rng sketchs
   surfaceWriteToPNG surface filepath
 
 main :: IO ()
@@ -90,4 +90,4 @@ main = do
   let frameRenders = evalState (animation frames) 1
   rng <- initStdGen
   let filenames = map (\i -> show i ++ ".png") [1 .. frames]
-  foldr1 (>>) $ map (uncurry $ writeSketch world rng) $ zip filenames frameRenders
+  mapM_ (uncurry $ writeSketch world rng) $ zip filenames frameRenders
