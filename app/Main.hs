@@ -2,9 +2,9 @@ module Main (main) where
 
 import Control.Monad.Reader
 import Control.Monad.State
--- import qualified Data.Vector as V
+import qualified Data.Vector as V
 import Graphics.Rendering.Cairo
--- import Linear.V2
+import Linear.V2
 import System.Random
 
 data World = World
@@ -13,15 +13,15 @@ data World = World
     scaleFactor :: Double
   }
 
--- newtype Contour = Contour (V.Vector (V2 Double))
+newtype Contour = Contour (V.Vector (V2 Double))
 
--- contourPath :: Contour -> State Double (Generate (Render ()))
--- contourPath (Contour vertices) = sequence_ $ concat [initCmds, lines_, endCmds]
---   where
---     initCmds = [newPath, moveTo (startX) (startY)]
---     lines_ = V.toList $ V.map (\(V2 xn yn) -> lineTo xn yn) $ V.tail vertices
---     endCmds = [closePath]
---     V2 startX startY = V.head vertices
+contourPath :: Contour -> Render ()
+contourPath (Contour vertices) = sequence_ $ concat [initCmds, lines_, endCmds]
+  where
+    initCmds = [newPath, moveTo startX startY]
+    lines_ = V.toList $ V.map (\(V2 xn yn) -> lineTo xn yn) $ V.tail vertices
+    endCmds = [closePath]
+    V2 startX startY = V.head vertices
 
 type Generate a = StateT StdGen (Reader World) a
 
