@@ -37,7 +37,7 @@ bg = do
     rectangle 0 0 w h
     fill
 
--
+-- the animated state is our red value, but we can take this and switch up in any way that we'd like to!
 draw :: State Double (Generate (Render ()))
 draw = do
   red <- get
@@ -52,6 +52,7 @@ draw = do
       do
         setSourceRGBA red green blue 1
         contourPath $ Contour $ V.fromList ([V2 (w / 6) (h / 2), V2 (w / 6) (h / 4), V2 (5 * w / 6) (h / 4), V2 (5 * w / 6) (h / 2)])
+
         fill
 
 sketch :: State Double (Generate (Render ()))
