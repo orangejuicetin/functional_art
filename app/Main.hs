@@ -51,8 +51,11 @@ draw = do
     return $
       do
         setSourceRGBA red green blue 1
-        contourPath $ Contour $ V.fromList ([V2 (w / 6) (h / 2), V2 (w / 6) (h / 4), V2 (5 * w / 6) (h / 4), V2 (5 * w / 6) (h / 2)])
-
+        -- contourPath $ Contour $ V.fromList ([V2 (w / 6) (h / 2), V2 (w / 6) (h / 4), V2 (5 * w / 6) (h / 4), V2 (5 * w / 6) (h / 2)])
+        -- fill
+        -- contourPath $ Contour $ V.fromList ([V2 (w / 6) (h / 2), V2 (w / 6) (h / 4), V2 (5 * w / 6) (h / 4)])
+        -- fill
+        contourPath $ Contour $ V.fromList [V2 (w / 6) (h / 2), V2 (w / 6) (h / 5)]
         fill
 
 sketch :: State Double (Generate (Render ()))
@@ -76,7 +79,7 @@ writeSketch world rng filepath sketchs = do
 main :: IO ()
 main = do
   let world = World 600 600 1
-  let frames = 100
+  let frames = 1
   let frameRenders = evalState (animation frames) 0
   rng <- initStdGen
   let filenames = map (\i -> show i ++ ".png") [1 .. frames]
